@@ -47,6 +47,9 @@ North Star Metric: Generated images downloaded per brand per week.
 - `npm run lint` — ESLint check
 - `npm test` — run tests
 
+## Current Phase
+Phase 2a complete. Phase 2b next: SQL migrations for profiles + generations tables with RLS policies.
+
 ## Current Priorities (updated weekly)
 1. Ship upload → generate → download flow
 2. Add auth + credit tracking
@@ -57,3 +60,5 @@ North Star Metric: Generated images downloaded per brand per week.
 - 2026-04-18: No custom model training in v0 — API-only to reduce scope
 - 2026-04-17: Scaffolded on Next.js 16.2.4 (not 15) — new project, no reason to pin to older major; v16 breaking changes are syntax-level not architectural
 - 2026-04-17: Phase 3 note — Next.js 16 renames middleware.ts to proxy.ts; update auth redirect implementation accordingly
+- 2026-04-20: Phase 2a shipped: Supabase client wired, env.ts validates all three keys at startup, connection verified. Used @supabase/ssr (latest recommended for Next.js App Router). Three clients exist: server (session), server (service role admin), browser.
+- 2026-04-20: Supabase renamed NEXT_PUBLIC_SUPABASE_ANON_KEY → NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in early 2026. Adapted env.ts and all client files. Lesson: specs from days ago already drift as platforms evolve.
