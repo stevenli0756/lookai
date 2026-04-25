@@ -1,8 +1,11 @@
 import { createServerClient } from "@supabase/ssr"
 import { type NextRequest, NextResponse } from "next/server"
+import type { User } from "@supabase/supabase-js"
 
 // Called from proxy.ts to refresh the user session on every request
-export const updateSession = async (request: NextRequest) => {
+export const updateSession = async (
+  request: NextRequest
+): Promise<{ response: NextResponse; user: User | null }> => {
   let supabaseResponse = NextResponse.next({ request: { headers: request.headers } })
 
   const supabase = createServerClient(
@@ -25,7 +28,7 @@ export const updateSession = async (request: NextRequest) => {
   )
 
   // Refresh session if expired — must not return early before this call
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  return supabaseResponse
+  return { response: supabaseResponse, user }
 }
