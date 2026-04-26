@@ -48,7 +48,7 @@ North Star Metric: Generated images downloaded per brand per week.
 - `npm test` — run tests
 
 ## Current Phase
-Phase 2b complete. profiles + generations tables, enum, indexes, RLS, and auto-profile trigger applied and verified against live Supabase. Phase 2c next: auth flow (proxy.ts, login page, auth guard layout).
+Phase 3 complete: R2 + presigned upload route shipped and verified. Phase 4 next: FASHN integration + credit deduction logic.
 
 ## Current Priorities (updated weekly)
 1. Ship upload → generate → download flow
@@ -63,3 +63,6 @@ Phase 2b complete. profiles + generations tables, enum, indexes, RLS, and auto-p
 - 2026-04-20: Phase 2a shipped: Supabase client wired, env.ts validates all three keys at startup, connection verified. Used @supabase/ssr (latest recommended for Next.js App Router). Three clients exist: server (session), server (service role admin), browser.
 - 2026-04-20: Supabase renamed NEXT_PUBLIC_SUPABASE_ANON_KEY → NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in early 2026. Adapted env.ts and all client files. Lesson: specs from days ago already drift as platforms evolve.
 - 2026-04-24: Phase 2b complete. Caught and corrected spec drift (stripe_customer_id removed, status enum fixed to 3 values: pending/complete/failed). Migration applied via supabase db push, tables verified with test route. Non-TTY supabase login workaround: use SUPABASE_ACCESS_TOKEN env var instead of interactive login.
+- 2026-04-25: Phase 2c complete. proxy.ts (Next.js 16 naming), login/signup/signout, /auth/callback, /app dashboard. updateSession updated to return user alongside response for redirect check. Auth flow tested end-to-end.
+- 2026-04-25: Phase 3 complete. R2 client wrapper (src/lib/r2.ts), /api/upload route with auth + type/size validation, presigned PUT URL pattern. Verified end-to-end via temp test page; file confirmed in R2 bucket.
+- 2026-04-25: R2 CORS policy required for browser PUT uploads. Cloudflare dashboard shows a default placeholder that looks like a real saved policy but isn't until Save is clicked. v0 policy: localhost:3000 with GET/PUT/HEAD methods. Production deploy will require adding the Vercel/custom domain to AllowedOrigins.
