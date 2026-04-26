@@ -37,17 +37,23 @@ export async function getPresignedGetUrl(
 export async function copyExternalUrlToR2(
   sourceUrl: string,
   objectKey: string,
-  contentType = "image/jpeg"
 ): Promise<void> {
   const response = await fetch(sourceUrl)
   if (!response.ok) throw new Error(`Failed to fetch source URL: ${response.status}`)
-  const buffer = Buffer.from(await response.arrayBuffer())
+
+  const contentType = response.headers.get("content-type") ?? "image/jpeg"
+  const contentLength = response.headers.get("content-length")
+
+  // response.body is a Web ReadableStream — AWS SDK v3 passes it directly to the HTTP
+  // layer without buffering. ContentLength from CDN headers lets R2 size the upload
+  // without consuming the stream. R2 also accepts chunked transfer if it's absent.
   await client.send(
     new PutObjectCommand({
       Bucket: env.R2_BUCKET_NAME,
       Key: objectKey,
-      Body: buffer,
+      Body: response.body as ReadableStream,
       ContentType: contentType,
+      ...(contentLength ? { ContentLength: Number(contentLength) } : {}),
     })
   )
 }

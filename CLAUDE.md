@@ -48,7 +48,7 @@ North Star Metric: Generated images downloaded per brand per week.
 - `npm test` — run tests
 
 ## Current Phase
-Phase 4 complete: FASHN integration + reserve-then-commit credit deduction shipped and verified. Phase 5 next: job polling + result handling (copy result to R2, update generation row to 'complete').
+Phase 5 in progress: /api/jobs/[id] polling route built, streaming R2 copy implemented, temp test pages at /test-generate and /test-poll exist (not yet deleted). Next session: run end-to-end poll test, verify result in R2 + DB, delete test pages, commit "Phase 5: job polling + result copy to R2", push.
 
 ## Current Priorities (updated weekly)
 1. Ship upload → generate → download flow
@@ -73,3 +73,4 @@ Phase 4 complete: FASHN integration + reserve-then-commit credit deduction shipp
 - 2026-04-25: Refund function uses non-atomic read-then-write pattern (read credits_remaining, add 1, UPDATE). Race window exists where two concurrent refunds could both read same balance and both add 1, granting one extra credit. Acceptable for v0 (failure × concurrency × intent ≈ 0). TODO: wrap in RPC for atomicity if abuse pattern emerges.
 - 2026-04-25: FASHN response field is `id`, not `prediction_id` as Phase 1 spec assumed. Mapped in fashn.ts client wrapper; DB column stays fashn_prediction_id (no schema impact).
 - 2026-04-25: First FASHN result observed. Quality acceptable for v0. Garment fidelity preserved on test image. Continuing with FASHN as planned API.
+- 2026-04-25: Phase 5 WIP. /api/jobs/[id] built with 7-step flow (auth → ownership → terminal cache → FASHN poll → R2 copy → DB update). copyExternalUrlToR2 updated to stream via response.body (Web ReadableStream) instead of buffering. output_format: "jpeg" added to submitGeneration for deterministic result extension. mapFashnStatus() helper added. Test pages rebuilt, end-to-end test pending next session.

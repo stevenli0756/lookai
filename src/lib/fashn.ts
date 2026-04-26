@@ -21,6 +21,13 @@ function extractPredictionId(response: { id: string }): string {
   return response.id
 }
 
+// Maps FASHN's granular statuses to our 3-value DB enum
+export function mapFashnStatus(fashnStatus: FashnStatus): "pending" | "complete" | "failed" {
+  if (fashnStatus === "completed") return "complete"
+  if (fashnStatus === "failed") return "failed"
+  return "pending" // in_queue | starting | processing
+}
+
 export async function submitGeneration(
   modelImageUrl: string,
   garmentImageUrl: string
@@ -43,6 +50,7 @@ export async function submitGeneration(
           garment_image: garmentImageUrl,
           garment_photo_type: "flat-lay",
           category: "auto",
+          output_format: "jpeg",
         },
       }),
       signal: controller.signal,
