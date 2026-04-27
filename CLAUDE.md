@@ -48,7 +48,7 @@ North Star Metric: Generated images downloaded per brand per week.
 - `npm test` — run tests
 
 ## Current Phase
-Phase 5 in progress: /api/jobs/[id] polling route built, streaming R2 copy implemented, temp test pages at /test-generate and /test-poll exist (not yet deleted). Next session: run end-to-end poll test, verify result in R2 + DB, delete test pages, commit "Phase 5: job polling + result copy to R2", push.
+Phase 5 complete: job polling + result copy to R2 shipped and verified. Phase 6 next: frontend UI (TryOnForm, ImageUploader, PollingStatus, ResultDisplay).
 
 ## Current Priorities (updated weekly)
 1. Ship upload → generate → download flow
@@ -74,3 +74,6 @@ Phase 5 in progress: /api/jobs/[id] polling route built, streaming R2 copy imple
 - 2026-04-25: FASHN response field is `id`, not `prediction_id` as Phase 1 spec assumed. Mapped in fashn.ts client wrapper; DB column stays fashn_prediction_id (no schema impact).
 - 2026-04-25: First FASHN result observed. Quality acceptable for v0. Garment fidelity preserved on test image. Continuing with FASHN as planned API.
 - 2026-04-25: Phase 5 WIP. /api/jobs/[id] built with 7-step flow (auth → ownership → terminal cache → FASHN poll → R2 copy → DB update). copyExternalUrlToR2 updated to stream via response.body (Web ReadableStream) instead of buffering. output_format: "jpeg" added to submitGeneration for deterministic result extension. mapFashnStatus() helper added. Test pages rebuilt, end-to-end test pending next session.
+- 2026-04-26: Phase 5 complete. /api/jobs/[id] polls FASHN, copies result to R2 via streaming (Readable.fromWeb() bridges Web ReadableStream → Node.js Readable; requestChecksumCalculation: "when_required" disables SigV4 body hashing for streaming compatibility). Verified end-to-end: pending→complete transition, result image in R2, DB row updated.
+- 2026-04-26: R2 streaming fix required two iterations: (1) requestChecksumCalculation: "when_required" to skip SigV4 hash, (2) Readable.fromWeb() to convert Web ReadableStream to Node.js Readable. AWS SDK v3 on Node.js requires Node.js streams, not Web streams.
+- 2026-04-26: PERMANENT RULE — manual DB cleanup SQL must always mirror full application invariants. Updating generations.status='failed' without refunding credits_remaining silently leaks credits. Correct pattern: use a CTE that updates generations RETURNING user_id, then updates profiles.credits_remaining += COUNT(*) in the same transaction. Never do a partial update that application code would not do. This mistake recurred twice — treat as a hard rule going forward.
