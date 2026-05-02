@@ -12,7 +12,7 @@ const client = new S3Client({
   },
   // R2 accepts unsigned payload; without this the SDK tries to hash the body
   // for SigV4, which requires reading a streaming body twice (impossible).
-  requestChecksumCalculation: "when_required",
+  requestChecksumCalculation: "WHEN_REQUIRED",
 })
 
 export async function getPresignedPutUrl(

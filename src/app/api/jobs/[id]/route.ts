@@ -139,7 +139,6 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   }
 
   // FASHN failed — refund credit and mark failed
-  const fashnErrorMessage = fashnResult.error?.message ?? "Unknown FASHN error"
   console.error("[jobs] FASHN generation failed:", fashnResult.error)
   await markFailed(service, user.id, generationId, "Generation failed. Your credit has been refunded.")
 

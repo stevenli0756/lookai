@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import SignOutButton from "./SignOutButton"
+import TryOnForm from "./components/TryOnForm"
 
 export default async function AppPage() {
   const supabase = await createClient()
@@ -12,29 +13,19 @@ export default async function AppPage() {
     .single()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Welcome back</h1>
-          <p className="text-sm text-gray-500 mt-1">{user!.email}</p>
-        </div>
-        <div className="bg-gray-50 rounded-lg px-4 py-3">
-          <p className="text-sm text-gray-600">
-            Credits remaining:{" "}
-            <span className="font-semibold text-gray-900">
-              {profile?.credits_remaining ?? "—"}
-            </span>
-          </p>
-        </div>
-        <button
-          disabled
-          className="w-full py-2 px-4 bg-black text-white text-sm font-medium rounded-lg opacity-40 cursor-not-allowed"
-        >
-          Generate try-on
-        </button>
-        <div className="text-center">
+    <div className="min-h-screen bg-zinc-50">
+      <header className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div>
+            <p className="text-lg font-semibold tracking-tight text-zinc-950">LookAI</p>
+            <p className="text-sm text-zinc-500">{user!.email}</p>
+          </div>
           <SignOutButton />
         </div>
+      </header>
+
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <TryOnForm initialCredits={profile?.credits_remaining ?? 0} />
       </div>
     </div>
   )

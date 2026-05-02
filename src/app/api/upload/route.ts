@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { getPresignedPutUrl, getPresignedGetUrl } from "@/lib/r2"
-import { env } from "@/env"
 import crypto from "crypto"
 
 const ALLOWED_TYPES: Record<string, string> = {

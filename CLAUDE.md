@@ -48,7 +48,7 @@ North Star Metric: Generated images downloaded per brand per week.
 - `npm test` — run tests
 
 ## Current Phase
-Phase 5 complete: job polling + result copy to R2 shipped and verified. Phase 6 next: frontend UI (TryOnForm, ImageUploader, PollingStatus, ResultDisplay).
+Phase 6 complete: real frontend shipped. Authenticated dashboard with image uploaders (drag-drop, validation, contained preview), credits display, polling status with animated gradient loader and rotating messages every 3s, result display with download. Build + lint clean. Phase 7 next: Stripe + Vercel deploy.
 
 ## Current Priorities (updated weekly)
 1. Ship upload → generate → download flow
@@ -77,3 +77,7 @@ Phase 5 complete: job polling + result copy to R2 shipped and verified. Phase 6 
 - 2026-04-26: Phase 5 complete. /api/jobs/[id] polls FASHN, copies result to R2 via streaming (Readable.fromWeb() bridges Web ReadableStream → Node.js Readable; requestChecksumCalculation: "when_required" disables SigV4 body hashing for streaming compatibility). Verified end-to-end: pending→complete transition, result image in R2, DB row updated.
 - 2026-04-26: R2 streaming fix required two iterations: (1) requestChecksumCalculation: "when_required" to skip SigV4 hash, (2) Readable.fromWeb() to convert Web ReadableStream to Node.js Readable. AWS SDK v3 on Node.js requires Node.js streams, not Web streams.
 - 2026-04-26: PERMANENT RULE — manual DB cleanup SQL must always mirror full application invariants. Updating generations.status='failed' without refunding credits_remaining silently leaks credits. Correct pattern: use a CTE that updates generations RETURNING user_id, then updates profiles.credits_remaining += COUNT(*) in the same transaction. Never do a partial update that application code would not do. This mistake recurred twice — treat as a hard rule going forward.
+- 2026-05-02: Phase 6 complete. Frontend implemented as 4 client components in src/app/app/components/: TryOnForm (orchestrator), ImageUploader (file picker with validation), PollingStatus (animated loader + rotating messages), ResultDisplay (image + download/reset). Replaced placeholder /app dashboard with real authenticated shell. Build + lint pass.
+- 2026-05-02: Image preview cropping fix — switched from bg-cover (crop to fill) to bg-contain (fit fully with letterbox). Critical for fashion use case where users need to see the full image they uploaded. Applied to ImageUploader and ResultDisplay.
+- 2026-05-02: Animated gradient loader + rotating status messages during polling. Replaced static dot with multi-color gradient ring (sky → violet → fuchsia) using Tailwind built-in animations (animate-pulse, animate-ping, arbitrary-value pulse). Messages rotate every 3s through 5 spec'd phrases. Both fixes essential for 'is this thing working?' perception during 5-30s wait.
+- 2026-05-02: AWS SDK enum casing — requestChecksumCalculation value must be 'WHEN_REQUIRED' (uppercase) not 'when_required' (lowercase). Lowercase passed Phase 5 testing because dev mode skipped strict TypeScript check; production build caught the mismatch. Fixed during Phase 6.
